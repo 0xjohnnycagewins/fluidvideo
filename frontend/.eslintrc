@@ -1,0 +1,50 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "jest": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:jest/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.json",
+    "sourceType": "module",
+    "createDefaultProgram": true
+  },
+  "plugins": ["@typescript-eslint","jest", "react", "eslint-plugin-import"],
+  "rules": {
+    "brace-style": "error",
+    "camelcase": ["error", {"properties": "never"}],
+    "curly": "error",
+    "import/order": "error",
+    "linebreak-style": ["error", "unix"],
+    "no-console": "error",
+    "no-empty": "off",
+    "no-multiple-empty-lines": "error",
+    "no-throw-literal": "error",
+    "prefer-arrow-callback": "error",
+    "react/prop-types": [0],
+    "@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "argsIgnorePattern": "^_", "ignoreRestSiblings": true }
+    ]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "globals": {
+    "clpp": "readonly"
+  }
+}

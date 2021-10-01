@@ -13,7 +13,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
-    "typescript": "^4.1.2",
+    "typescript": "^4.4.3",
     "video.js": "^7.15.4",
     "videojs-react-enhanced": "^0.3.1",
     "web-vitals": "^1.0.1"
@@ -43,6 +43,13 @@
     ]
   },
   "devDependencies": {
-    "@types/video.js": "^7.3.27"
+    "@types/video.js": "^7.3.27",
+    "@typescript-eslint/eslint-plugin": "^4.32.0",
+    "@typescript-eslint/parser": "^4.32.0",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-jest": "^24.5.0",
+    "eslint-plugin-jest-dom": "^3.9.2",
+    "eslint-plugin-local-rules": "^1.1.0",
+    "eslint-plugin-react": "^7.26.1"
   }
 }

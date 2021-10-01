@@ -26,5 +26,11 @@
     "solidity-coverage": "^0.7.17",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.3"
+  },
+  "scripts": {
+    "hardhat": "npx hardhat",
+    "deploy": "npx hardhat run scripts/deploy.js",
+    "chain": "npx hardhat chain"
   }
 }
+

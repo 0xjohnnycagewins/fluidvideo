@@ -1,0 +1,35 @@
+# Build
+build/
+dist/
+
+## Coverage
+coverage/
+
+## Git
+.git
+.gitignore
+
+## Prettier
+.prettierignore
+
+## VSCode
+.vscode
+
+## Yarn
+package.json
+yarn.lock
+
+# config files
+.eslintrc
+.eslintignore
+.huskyrc
+.lintstagedrc
+.travis.yml
+CHANGELOG.md
+README.md
+tsconfig.json
+.eslintcache
+
+
+# external libraries
+modules/web/src/static/lib/**
