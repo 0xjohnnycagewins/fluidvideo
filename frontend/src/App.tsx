@@ -1,9 +1,15 @@
-import React from 'react';
-import videojs from 'video.js';
-import VREPlayer from 'videojs-react-enhanced';
+import { Web3Provider } from '@ethersproject/providers';
+import { Framework } from '@superfluid-finance/js-sdk';
+import { WalletConnectButton } from 'components/wallet-connect-button';
+import { ethers } from 'ethers';
+import React, { useEffect, useRef } from 'react';
+import { Nullable } from 'typescript-nullable';
 import 'video.js/dist/video-js.css';
+import VREPlayer from 'videojs-react-enhanced';
 
 export const App: React.FunctionComponent = () => {
+  const SuperfluidSDK = require('@superfluid-finance/js-sdk');
+  const sf = useRef<Nullable<Framework>>(undefined);
   const playerOptions: VREPlayer.IPlayerOptions = {
     src: 'https://cdn.livepeer.com/hls/1bc1nsg0kzt7mtjn/index.m3u8',
     controls: true,
@@ -16,9 +22,39 @@ export const App: React.FunctionComponent = () => {
     fluid: true,
   };
 
+  const onWalletConnected = (addresses: string[]): void => {
+    console.log(`first address is ${addresses[0]}`);
+    sf.current?.user({
+      address: addresses[0],
+      token: '0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00',
+    });
+  };
+
+  useEffect(() => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    console.log(`signer is ${signer._address}`);
+    sf.current = new SuperfluidSDK.Framework({
+      gasReportType: 'JSON',
+      isTruffle: false,
+      ethers: new Web3Provider(window.ethereum) as any,
+    });
+    sf.current
+      ?.initialize()
+      .then(() => {
+        console.log('initialization worked');
+      })
+      .catch((err) => {
+        console.log(`error initializing with ${JSON.stringify(err)}`);
+      });
+  }, []);
+
   return (
     <div style={{ paddingLeft: 32, paddingRight: 32 }}>
-      <p>{'Video player test'}</p>
+      {sf.current && (
+        <WalletConnectButton web3={sf.current.web3} onWalletConnected={onWalletConnected} />
+      )}
       <VREPlayer
         playerOptions={playerOptions}
         videojsOptions={videojsOptions}

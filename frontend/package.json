@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@ethersproject/contracts": "^5.4.1",
+    "@mui/material": "^5.0.2",
+    "@superfluid-finance/js-sdk": "^0.5.4",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -50,6 +55,7 @@
     "eslint-plugin-jest": "^24.5.0",
     "eslint-plugin-jest-dom": "^3.9.2",
     "eslint-plugin-local-rules": "^1.1.0",
-    "eslint-plugin-react": "^7.26.1"
+    "eslint-plugin-react": "^7.26.1",
+    "typescript-nullable": "^0.6.0"
   }
 }

@@ -7,5 +7,6 @@
     "outDir": "dist"
   },
   "include": ["./scripts", "./test"],
+  "exclude": ["node_modules"],
   "files": ["./hardhat.config.ts"]
 }

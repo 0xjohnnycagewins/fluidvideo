@@ -23,9 +23,8 @@
     "brace-style": "error",
     "camelcase": ["error", {"properties": "never"}],
     "curly": "error",
-    "import/order": "error",
     "linebreak-style": ["error", "unix"],
-    "no-console": "error",
+    "no-console": "warn",
     "no-empty": "off",
     "no-multiple-empty-lines": "error",
     "no-throw-literal": "error",
@@ -45,6 +44,6 @@
     }
   },
   "globals": {
-    "clpp": "readonly"
+    "window.ethereum": "readonly"
   }
 }

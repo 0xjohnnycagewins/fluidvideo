@@ -1,6 +1,5 @@
 # Build
 build/
-dist/
 
 ## Coverage
 coverage/
@@ -29,7 +28,3 @@ CHANGELOG.md
 README.md
 tsconfig.json
 .eslintcache
-
-
-# external libraries
-modules/web/src/static/lib/**

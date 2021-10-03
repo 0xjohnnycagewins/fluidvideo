@@ -1,9 +1,3 @@
 node_modules/
 **/node_modules/
 **/public/
-dist/
-modules/web/src/static/lib/
-task-config.js
-task-config.shared.js
-jest.config.js
-jest-puppeteer.config.js
