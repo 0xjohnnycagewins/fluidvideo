@@ -18,7 +18,7 @@
     "sourceType": "module",
     "createDefaultProgram": true
   },
-  "plugins": ["@typescript-eslint","jest", "react", "eslint-plugin-import"],
+  "plugins": ["jest", "react", "eslint-plugin-import", "react-hooks", "@typescript-eslint"],
   "rules": {
     "brace-style": "error",
     "camelcase": ["error", {"properties": "never"}],
@@ -30,12 +30,19 @@
     "no-throw-literal": "error",
     "prefer-arrow-callback": "error",
     "react/prop-types": [0],
+    "no-unused-vars": "off",
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",
       { "argsIgnorePattern": "^_", "ignoreRestSiblings": true }
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": [
+      "warn", {
+        "additionalHooks": "(useRecoilCallback|useRecoilTransaction_UNSTABLE)"
+      }
     ]
   },
   "settings": {

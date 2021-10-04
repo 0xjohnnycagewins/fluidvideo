@@ -1,14 +1,9 @@
-import { Nullable } from 'typescript-nullable';
+import { ethers } from 'ethers';
+import { INFURA_ID } from 'utils/constants';
+const DEFAULT_CHAIN_ID = 31337;
 
-export const INFURA_ID = 'db4a6e5e4e6e4555ae8967b17ede3879';
-export const APP_NAME = 'FluidVideo';
-// const APP_LOGO_URL = 'https://example.com/logo.png';
-const DEFAULT_CHAIN_ID = 5;
-
-export interface Network {
-  name: string;
+export interface Network extends ethers.providers.Network {
   color: string;
-  chainId: number;
   blockExplorer: string;
   rpcUrl: string;
   gasPrice?: number;
@@ -193,14 +188,3 @@ export const NETWORKS: { [index: string]: Network } = {
     gasPrice: 1000000000,
   },
 };
-
-export const NETWORK = (chainId: number): Nullable<Network> => {
-  for (let networkName in NETWORKS) {
-    if (NETWORKS[networkName].chainId === chainId) {
-      return NETWORKS[networkName];
-    }
-  }
-  return undefined;
-};
-
-export const DEFAULT_NETWORK = (): Network => NETWORK(DEFAULT_CHAIN_ID)!;
