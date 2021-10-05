@@ -8,14 +8,12 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { atom, useRecoilState } from 'recoil';
 import { ExternalProviderWithEvents } from 'utils/ethers';
 import { StateKey } from 'utils/recoil';
-import Web3 from 'web3';
 
 interface Props {
-  web3?: Web3;
-  onWalletConnected?: (addresses: string[]) => void;
+  onWalletConnected?: (address: string) => void;
 }
 
-export const WalletConnectButton: React.FunctionComponent<Props> = () => {
+export const WalletConnectButton: React.FunctionComponent<Props> = ({ onWalletConnected }) => {
   const web3modal = useWeb3Modal();
   const injectedProviderWrapper = useInjectedProvider();
   const injectedProviderChainIdState = useMemo(
@@ -53,6 +51,7 @@ export const WalletConnectButton: React.FunctionComponent<Props> = () => {
       } else {
         setInjectedProviderChainId(providerAndSigner?.providerNetwork?.chainId ?? 0);
         providerAndSigner?.signer?.getAddress().then((address) => {
+          onWalletConnected(address);
           setUserAddress(address);
         });
       }

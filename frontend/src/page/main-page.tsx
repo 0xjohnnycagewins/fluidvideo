@@ -1,11 +1,13 @@
+import { Framework } from '@superfluid-finance/js-sdk/src/Framework';
 import { WalletConnectButton } from 'components/wallet-connect-button';
-import React from 'react';
+import React, { useRef } from 'react';
 import 'video.js/dist/video-js.css';
+import { Nullable } from 'typescript-nullable';
 import VREPlayer from 'videojs-react-enhanced';
 
 export const MainPage: React.FunctionComponent = () => {
-  // const SuperfluidSDK = require('@superfluid-finance/js-sdk');
-  // const sf = useRef<Nullable<Framework>>(undefined);
+  const SuperfluidSDK = require('@superfluid-finance/js-sdk');
+  const sf = useRef<Nullable<Framework>>(undefined);
   const playerOptions: VREPlayer.IPlayerOptions = {
     src: 'https://cdn.livepeer.com/hls/1bc1nsg0kzt7mtjn/index.m3u8',
     controls: true,
