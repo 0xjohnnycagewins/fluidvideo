@@ -1,9 +1,10 @@
-import { Web3Provider } from '@ethersproject/providers';
 import { Button } from '@mui/material';
+import { parseProviderOrSigner } from 'eth-hooks/functions/providerOrSigner';
 import { ethers } from 'ethers';
+import { useInjectedProvider } from 'provider/injected-provider-provider';
 import { useWeb3Modal } from 'provider/web3modal-provider';
-import { isNil } from 'ramda';
-import React, { useState } from 'react';
+import { isEmpty, isNil } from 'ramda';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { atom, useRecoilState } from 'recoil';
 import { ExternalProviderWithEvents } from 'utils/ethers';
 import { StateKey } from 'utils/recoil';
@@ -16,60 +17,77 @@ interface Props {
 
 export const WalletConnectButton: React.FunctionComponent<Props> = () => {
   const web3modal = useWeb3Modal();
-  // const [injectedProvider, setInjectedProvider] = useRecoilState<Web3Provider>(
-  //   atom({
-  //     key: StateKey.INJECTED_PROVIDER,
-  //     default: {} as Web3Provider,
-  //   }),
-  // );
-  const [injectedProvider, setInjectedProvider] = useState<Web3Provider>();
+  const injectedProviderWrapper = useInjectedProvider();
+  const injectedProviderChainIdState = useMemo(
+    () =>
+      atom({
+        key: StateKey.INJECTED_PROVIDER_CHAIN_ID,
+        default: 0,
+      }),
+    [],
+  ); // TODO create a factory to generate these as singletons with lazy loading
+  const userAddressState = useMemo(
+    () =>
+      atom({
+        key: StateKey.USER_ADDRESS,
+        default: '',
+      }),
+    [],
+  ); // TODO create a factory to generate these as singletons with lazy loading
+  const [_injectedProviderChainId, setInjectedProviderChainId] = useRecoilState<number>(
+    injectedProviderChainIdState,
+  );
+  const [userAddress, setUserAddress] = useRecoilState<string>(userAddressState);
 
-  const logoutOfWeb3Modal = async () => {
-    await web3modal.clearCachedProvider();
+  const disconnect = useCallback((): void => {
+    web3modal.clearCachedProvider();
+    setInjectedProviderChainId(0);
+    setUserAddress('');
+  }, [web3modal, setInjectedProviderChainId, setUserAddress]);
+
+  const setInjectedProvider = (provider: ExternalProviderWithEvents): void => {
+    injectedProviderWrapper.provider = new ethers.providers.Web3Provider(provider);
+    parseProviderOrSigner(injectedProviderWrapper.provider).then((providerAndSigner) => {
+      if (isNil(providerAndSigner?.signer)) {
+        disconnect();
+      } else {
+        setInjectedProviderChainId(providerAndSigner?.providerNetwork?.chainId ?? 0);
+        providerAndSigner?.signer?.getAddress().then((address) => {
+          setUserAddress(address);
+        });
+      }
+    });
+  };
+
+  const logoutOfWeb3Modal = () => {
+    const injectedProvider = injectedProviderWrapper.provider;
     if (!isNil(injectedProvider)) {
       const provider = injectedProvider.provider as ExternalProviderWithEvents;
       if (!isNil(provider) && typeof provider.disconnect == 'function') {
-        await provider.disconnect();
+        provider.disconnect().then(() => {
+          disconnect();
+        });
       }
+    } else {
+      disconnect();
     }
-    setTimeout(() => {
-      window.location.reload();
-    }, 1);
-  };
-
-  // useEffect((): void => {
-  //   const defaultNetwork = DEFAULT_NETWORK();
-  //   const walletLink = new WalletLink({
-  //     appName: APP_NAME,
-  //   });
-  // }, []);
-  //
-  // const walletLinkProvider = walletLink.makeWeb3Provider(
-  //   defaultNetwork.rpcUrl,
-  //   defaultNetwork.chainId,
-  // );
-
-  const connectWallet = (): void => {
-    // const i = 0;
-    // if (i > 1) {
-    //   web3.eth.requestAccounts().then(onWalletConnected);
-    // }
   };
 
   const openModal = (): void => {
     web3modal
       .connect()
       .then((provider: ExternalProviderWithEvents) => {
-        setInjectedProvider(new ethers.providers.Web3Provider(provider));
         console.log(`connected to provider`);
+        setInjectedProvider(provider);
+
         provider.on('chainChanged', (chainId: number) => {
           console.log(`chain changed to ${chainId}! updating providers`);
-          setInjectedProvider(new ethers.providers.Web3Provider(provider));
+          setInjectedProvider(provider);
         });
 
         provider.on('accountsChanged', () => {
           console.log(`account changed!`);
-          setInjectedProvider(new ethers.providers.Web3Provider(provider));
+          setInjectedProvider(provider);
         });
 
         // Subscribe to session disconnection
@@ -83,9 +101,16 @@ export const WalletConnectButton: React.FunctionComponent<Props> = () => {
       });
   };
 
+  // mount
+  useEffect((): void => {
+    if (web3modal.cachedProvider) {
+      openModal();
+    }
+  }, []);
+
   return (
-    <Button variant="outlined" onClick={openModal}>
-      Connect
+    <Button variant="outlined" onClick={openModal} disabled={!isEmpty(userAddress)}>
+      {isEmpty(userAddress) ? 'Connect' : userAddress}
     </Button>
   );
 };
