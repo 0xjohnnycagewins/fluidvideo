@@ -1,11 +1,20 @@
+import { Web3Provider } from '@ethersproject/providers';
+import { SuperfluidButton } from 'components/superfluid-button';
 import { WalletConnectButton } from 'components/wallet-connect-button';
+import { useSuperfluid } from 'provider/superfluid-provider';
 import React from 'react';
+import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
+import { getAtom, StateKey } from 'utils/recoil';
 import 'video.js/dist/video-js.css';
 import VREPlayer from 'videojs-react-enhanced';
 
 export const MainPage: React.FunctionComponent = () => {
-  // const SuperfluidSDK = require('@superfluid-finance/js-sdk');
-  // const sf = useRef<Nullable<Framework>>(undefined);
+  const superfluid = useSuperfluid();
+  const superfluidInitializedState = getAtom<boolean>(StateKey.SUPERFLUID_INITIALIZED);
+  const [_superfluidInitialized, setSuperfluidInitialized] = useRecoilState(
+    superfluidInitializedState,
+  );
   const playerOptions: VREPlayer.IPlayerOptions = {
     src: 'https://cdn.livepeer.com/hls/1bc1nsg0kzt7mtjn/index.m3u8',
     controls: true,
@@ -17,38 +26,29 @@ export const MainPage: React.FunctionComponent = () => {
   const videojsOptions: VREPlayer.IVideoJsOptions = {
     fluid: true,
   };
-  //
-  // const onWalletConnected = (addresses: string[]): void => {
-  //   console.log(`first address is ${addresses[0]}`);
-  //   sf.current?.user({
-  //     address: addresses[0],
-  //     token: '0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00',
-  //   });
-  // };
-  //
-  // useEffect(() => {
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-  //   const signer = provider.getSigner();
-  //
-  //   console.log(`signer is ${signer._address}`);
-  //   sf.current = new SuperfluidSDK.Framework({
-  //     gasReportType: 'JSON',
-  //     isTruffle: false,
-  //     ethers: new Web3Provider(window.ethereum as any),
-  //   });
-  //   sf.current
-  //     ?.initialize()
-  //     .then(() => {
-  //       console.log('initialization worked');
-  //     })
-  //     .catch((err) => {
-  //       console.log(`error initializing with ${JSON.stringify(err)}`);
-  //     });
-  // }, []);
+
+  // TODO add these in a constant
+  const onWalletConnected = (provider: Web3Provider, address: string): void => {
+    superfluid
+      .initialize(provider)
+      .then(() => {
+        console.log(`superfluid initialized`);
+        superfluid.instance?.user({
+          address,
+          token: '0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00',
+        });
+        setSuperfluidInitialized(true);
+      })
+      .catch((error) => {
+        console.error(`error initializing superfluid ${error.message}`);
+        setSuperfluidInitialized(false);
+      });
+  };
 
   return (
-    <div style={{ paddingLeft: 32, paddingRight: 32 }}>
-      <WalletConnectButton />
+    <Container style={{ paddingLeft: 32, paddingRight: 32 }}>
+      <WalletConnectButton onWalletConnected={onWalletConnected} />
+      <StyledSuperfluidButton />
       {/*<VREPlayer*/}
       {/*  playerOptions={playerOptions}*/}
       {/*  videojsOptions={videojsOptions}*/}
@@ -57,6 +57,15 @@ export const MainPage: React.FunctionComponent = () => {
       {/*  onPause={() => console.log('Pause!')}*/}
       {/*  onEnded={() => console.log('Ended!')}*/}
       {/*/>*/}
-    </div>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  padding-left: 32px;
+  padding-right: 32px;
+`;
+
+const StyledSuperfluidButton = styled(SuperfluidButton)`
+  padding-left: 16px;
+`;

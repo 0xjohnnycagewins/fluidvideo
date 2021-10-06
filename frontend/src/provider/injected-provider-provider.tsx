@@ -1,6 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers';
 import React, { useMemo } from 'react';
 
+// TODO use singleton pattern
 export class Web3ProviderWrapper {
   private _provider: Web3Provider | undefined;
   public get provider() {

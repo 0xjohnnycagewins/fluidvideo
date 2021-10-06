@@ -1,43 +1,28 @@
+import { Web3Provider } from '@ethersproject/providers';
 import { Button } from '@mui/material';
 import { parseProviderOrSigner } from 'eth-hooks/functions/providerOrSigner';
 import { ethers } from 'ethers';
 import { useInjectedProvider } from 'provider/injected-provider-provider';
 import { useWeb3Modal } from 'provider/web3modal-provider';
 import { isEmpty, isNil } from 'ramda';
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { atom, useRecoilState } from 'recoil';
+import React, { useCallback, useEffect } from 'react';
+import { useRecoilState } from 'recoil';
 import { ExternalProviderWithEvents } from 'utils/ethers';
-import { StateKey } from 'utils/recoil';
-import Web3 from 'web3';
+import { StateKey, getAtom } from 'utils/recoil';
 
 interface Props {
-  web3?: Web3;
-  onWalletConnected?: (addresses: string[]) => void;
+  onWalletConnected?: (provider: Web3Provider, address: string) => void;
 }
 
-export const WalletConnectButton: React.FunctionComponent<Props> = () => {
+export const WalletConnectButton: React.FunctionComponent<Props> = ({ onWalletConnected }) => {
   const web3modal = useWeb3Modal();
   const injectedProviderWrapper = useInjectedProvider();
-  const injectedProviderChainIdState = useMemo(
-    () =>
-      atom({
-        key: StateKey.INJECTED_PROVIDER_CHAIN_ID,
-        default: 0,
-      }),
-    [],
-  ); // TODO create a factory to generate these as singletons with lazy loading
-  const userAddressState = useMemo(
-    () =>
-      atom({
-        key: StateKey.USER_ADDRESS,
-        default: '',
-      }),
-    [],
-  ); // TODO create a factory to generate these as singletons with lazy loading
-  const [_injectedProviderChainId, setInjectedProviderChainId] = useRecoilState<number>(
+  const injectedProviderChainIdState = getAtom<number>(StateKey.INJECTED_PROVIDER_CHAIN_ID);
+  const userAddressState = getAtom<string>(StateKey.USER_ADDRESS);
+  const [_injectedProviderChainId, setInjectedProviderChainId] = useRecoilState(
     injectedProviderChainIdState,
   );
-  const [userAddress, setUserAddress] = useRecoilState<string>(userAddressState);
+  const [userAddress, setUserAddress] = useRecoilState(userAddressState);
 
   const disconnect = useCallback((): void => {
     web3modal.clearCachedProvider();
@@ -53,6 +38,7 @@ export const WalletConnectButton: React.FunctionComponent<Props> = () => {
       } else {
         setInjectedProviderChainId(providerAndSigner?.providerNetwork?.chainId ?? 0);
         providerAndSigner?.signer?.getAddress().then((address) => {
+          onWalletConnected?.(injectedProviderWrapper.provider!, address);
           setUserAddress(address);
         });
       }
