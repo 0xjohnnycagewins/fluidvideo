@@ -1,3 +1,4 @@
+import { LoginPage } from 'components/page/login.page';
 import { MainPage } from 'page/main-page';
 import { InjectedProviderProvider } from 'provider/injected-provider-provider';
 import { LocalProviderProvider } from 'provider/local-provider-provider';
@@ -15,6 +16,7 @@ export const App: React.FunctionComponent = () => (
         <Web3ModalProvider>
           <SuperfluidProvider>
             <Switch>
+              <Route path="/login" component={LoginPage} />
               <Route path="/" component={MainPage} />
             </Switch>
           </SuperfluidProvider>
