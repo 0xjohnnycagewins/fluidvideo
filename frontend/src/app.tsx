@@ -4,6 +4,7 @@ import { LocalProviderProvider } from 'provider/local-provider-provider';
 import { SuperfluidProvider } from 'provider/superfluid-provider';
 import { Web3ModalProvider } from 'provider/web3modal-provider';
 import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { NETWORKS } from 'utils/networks';
 
@@ -13,7 +14,9 @@ export const App: React.FunctionComponent = () => (
       <InjectedProviderProvider>
         <Web3ModalProvider>
           <SuperfluidProvider>
-            <MainPage />
+            <Switch>
+              <Route path="/" component={MainPage} />
+            </Switch>
           </SuperfluidProvider>
         </Web3ModalProvider>
       </InjectedProviderProvider>
