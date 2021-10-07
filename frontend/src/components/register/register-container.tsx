@@ -1,15 +1,15 @@
 import { Link } from '@mui/material';
 import { Column } from 'components/base/column.component';
-import { LoginForm } from 'components/login/login-form';
+import { RegisterForm } from 'components/register/register-form';
 import React from 'react';
 import styled from 'styled-components';
 
-export const LoginContainer: React.FunctionComponent = () => {
+export const RegisterContainer: React.FunctionComponent = () => {
   return (
     <StyledColumn>
       <StyledForm />
-      <PaddedLink href="/register" underline="always">
-        {"Don't have an account, register here"}
+      <PaddedLink href="/login" underline="always">
+        {'Already have an account, login here'}
       </PaddedLink>
     </StyledColumn>
   );
@@ -23,7 +23,7 @@ const StyledColumn = styled(Column)`
   align-items: center;
   justify-content: center;
 `;
-const StyledForm = styled(LoginForm)`
+const StyledForm = styled(RegisterForm)`
   height: 500px;
 `;
 
