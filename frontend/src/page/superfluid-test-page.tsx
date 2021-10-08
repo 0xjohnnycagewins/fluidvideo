@@ -36,7 +36,7 @@ export const SuperfluidTestPage: React.FunctionComponent = () => {
         //TODO: Add a pricing here
         flowRate: '385802469135802',
       })
-      .then((flow) => console.log(`started flowing with: ${JSON.stringify(flow)}`))
+      .then(() => console.log(`started flowing`))
       .catch((error) => console.log(`error flowing with : ${error}`));
   };
 
@@ -46,7 +46,7 @@ export const SuperfluidTestPage: React.FunctionComponent = () => {
         recipient: streamerAddress,
         flowRate: '0',
       })
-      .then((flow) => console.log(`stop flow with: ${JSON.stringify(flow)}`))
+      .then(() => console.log(`stop flow`))
       .catch((error) => console.log(`error stopping flow with : ${error}`));
   };
 

@@ -1,6 +1,8 @@
 import { Axios } from 'axios';
 import { MainPage } from 'page/main-page';
 import { StreamerPage } from 'page/streamer-page';
+import { SuperfluidStreamerTestPage } from 'page/superfluid-streamer-test-page';
+import { SuperfluidTestPage } from 'page/superfluid-test-page';
 import { HttpClientProvider } from 'provider/http-client-provider';
 import { InjectedProviderProvider } from 'provider/injected-provider-provider';
 import { LocalProviderProvider } from 'provider/local-provider-provider';
@@ -37,6 +39,8 @@ export const App: React.FunctionComponent = () => {
                 <QueryClientProvider client={queryClient}>
                   <Switch>
                     <Route path="/dashboard" component={StreamerPage} />
+                    <Route path="/superfluid" component={SuperfluidTestPage} />
+                    <Route path="/superfluid-streamer" component={SuperfluidStreamerTestPage} />
                     <Route path="/" component={MainPage} />
                   </Switch>
                 </QueryClientProvider>
