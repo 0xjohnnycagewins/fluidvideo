@@ -55,7 +55,6 @@ export const VideoPlayer: React.FunctionComponent<Props> = ({
       </VideoNotLive>
     );
   }
-  console.log(`player options ${JSON.stringify(playerOptions)}`);
 
   return (
     <PlayerContainer width={playerOptions.width} height={playerOptions.height}>
