@@ -1,4 +1,4 @@
-import { BoxStyle } from 'components/base/box.component';
+import { BoxStyle } from 'components/base/box';
 import React, { HTMLAttributes, MutableRefObject } from 'react';
 import styled, { css } from 'styled-components';
 

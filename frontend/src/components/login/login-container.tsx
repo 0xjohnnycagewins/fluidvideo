@@ -1,4 +1,4 @@
-import { Column } from 'components/base/column.component';
+import { Column } from 'components/base/column';
 import { LoginForm } from 'components/login/login-form';
 import React from 'react';
 import styled from 'styled-components';

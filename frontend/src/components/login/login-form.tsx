@@ -1,5 +1,5 @@
 import { Button, TextField } from '@mui/material';
-import { Column } from 'components/base/column.component';
+import { Column } from 'components/base/column';
 import React from 'react';
 import styled from 'styled-components';
 
