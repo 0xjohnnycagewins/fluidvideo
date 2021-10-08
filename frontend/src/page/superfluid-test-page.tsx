@@ -9,7 +9,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const streamerAddress = '0x9e7343Ce1816a7fc21E1c46537F04050F97AfbD9';
-const daixTokenAddress = '0x1305F6B6Df9Dc47159D12Eb7aC2804d4A33173c2';
+const daixTokenAddress = '0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00';
 
 export const SuperfluidTestPage: React.FunctionComponent = () => {
   const sf: SuperfluidWrapper = useSuperfluid();
@@ -33,10 +33,21 @@ export const SuperfluidTestPage: React.FunctionComponent = () => {
     viewer
       .flow({
         recipient: streamerAddress,
+        //TODO: Add a pricing here
         flowRate: '385802469135802',
       })
       .then((flow) => console.log(`started flowing with: ${JSON.stringify(flow)}`))
       .catch((error) => console.log(`error flowing with : ${error}`));
+  };
+
+  const onStopStreamingFund = () => {
+    viewer
+      .flow({
+        recipient: streamerAddress,
+        flowRate: '0',
+      })
+      .then((flow) => console.log(`stop flow with: ${JSON.stringify(flow)}`))
+      .catch((error) => console.log(`error stopping flow with : ${error}`));
   };
 
   // TODO: Add tip amount
@@ -57,6 +68,7 @@ export const SuperfluidTestPage: React.FunctionComponent = () => {
       <RightAlignedColumn>
         <WalletConnectButton onWalletConnected={onWalletConnected} />
         <Button onClick={onStartStreamingFund}>Start sending func to stream</Button>
+        <Button onClick={onStopStreamingFund}>Stop sending func to stream</Button>
         <Button onClick={() => onTip(10)}>Send tip</Button>
       </RightAlignedColumn>
     </Container>
