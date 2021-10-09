@@ -54,12 +54,22 @@ export const SuperfluidTestPage: React.FunctionComponent = () => {
   const onTip = (amount: number) => {
     viewer
       .giveShares({ poolId: 1, recipient: streamerAddress, shares: 100 })
-      .then(() => {
-        viewer
-          .distributeToPool({ poolId: 1, amount })
-          .then(() => console.log(`succesfully sent ${amount}`))
-          .catch((error) => console.log(`error sending funds with: ${error}`));
-      })
+      .then(() =>
+        viewer.details().then((details) => {
+          console.log(`details for viewer to tip are: ${JSON.stringify(details)}`);
+          viewer
+            .distributeToPool({ poolId: 1, amount })
+            .then(() => {
+              console.log(`succesfully sent ${amount}`);
+              viewer
+                .details()
+                .then((details) =>
+                  console.log(`details for viewer that was tipped: ${JSON.stringify(details)}`),
+                );
+            })
+            .catch((error) => console.log(`error sending funds with: ${error}`));
+        }),
+      )
       .catch((error) => console.log(`error giving shares with: ${error}`));
   };
 
