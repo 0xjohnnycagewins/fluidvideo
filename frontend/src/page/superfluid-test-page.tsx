@@ -3,30 +3,43 @@ import { Button } from '@mui/material';
 import { User } from '@superfluid-finance/js-sdk/src/User';
 import { Box } from 'components/base/box';
 import { Column } from 'components/base/column';
+import { SuperfluidConnected } from 'components/superfluid-connected';
+import { TipButton } from 'components/tip-button';
 import { WalletConnectButton } from 'components/wallet-connect-button';
 import { SuperfluidWrapper, useSuperfluid } from 'provider/superfluid-provider';
 import React from 'react';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { daixTokenAddress } from 'utils/constants';
+import { getAtom, StateKey } from 'utils/recoil';
 
 const streamerAddress = '0x9e7343Ce1816a7fc21E1c46537F04050F97AfbD9';
 
 export const SuperfluidTestPage: React.FunctionComponent = () => {
   const sf: SuperfluidWrapper = useSuperfluid();
+  const superfluidInitializedState = getAtom<boolean>(StateKey.SUPERFLUID_INITIALIZED);
+  const [, setSuperfluidInitialized] = useRecoilState(superfluidInitializedState);
   let viewer: User;
 
   const onWalletConnected = (provider: Web3Provider, address: string) => {
-    sf.initialize(provider).then(() => {
-      viewer = sf.instance!.user({ address, token: daixTokenAddress });
-      viewer
-        .details()
-        .then((details) => console.log(`details for viewer are: ${JSON.stringify(details)}`))
-        .catch((error) => console.log(`got an error for details: ${error}`));
-      viewer
-        .createPool({ poolId: 1 })
-        .then(() => console.log(`pool created`))
-        .catch((error) => console.log(`error creating the pool with: ${error}`));
-    });
+    // TODO: Move the initialization to an upper component
+    sf.initialize(provider)
+      .then(() => {
+        setSuperfluidInitialized(true);
+        viewer = sf.instance!.user({ address, token: daixTokenAddress });
+        viewer
+          .details()
+          .then((details) => console.log(`details for viewer are: ${JSON.stringify(details)}`))
+          .catch((error) => console.log(`got an error for details: ${error}`));
+        viewer
+          .createPool({ poolId: 1 })
+          .then(() => console.log(`pool created`))
+          .catch((error) => console.log(`error creating the pool with: ${error}`));
+      })
+      .catch((error) => {
+        console.log(`Error initializing the Superfluid SDK: ${error}`);
+        setSuperfluidInitialized(false);
+      });
   };
 
   const onStartStreamingFund = () => {
@@ -77,9 +90,11 @@ export const SuperfluidTestPage: React.FunctionComponent = () => {
     <Container>
       <RightAlignedColumn>
         <WalletConnectButton onWalletConnected={onWalletConnected} />
-        <Button onClick={onStartStreamingFund}>Start sending func to stream</Button>
-        <Button onClick={onStopStreamingFund}>Stop sending func to stream</Button>
-        <Button onClick={() => onTip(10)}>Send tip</Button>
+        <SuperfluidConnected>
+          <Button onClick={onStartStreamingFund}>Start sending func to stream</Button>
+          <Button onClick={onStopStreamingFund}>Stop sending func to stream</Button>
+          <TipButton streamerAddress={streamerAddress} />
+        </SuperfluidConnected>
       </RightAlignedColumn>
     </Container>
   );

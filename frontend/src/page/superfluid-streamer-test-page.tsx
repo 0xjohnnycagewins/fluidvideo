@@ -3,6 +3,7 @@ import { Box } from 'components/base/box';
 import { Column } from 'components/base/column';
 import { MoneyStreamChip } from 'components/money-stream-chip';
 import { SuperfluidConnected } from 'components/superfluid-connected';
+import { TipButton } from 'components/tip-button';
 import { WalletConnectButton } from 'components/wallet-connect-button';
 import { SuperfluidWrapper, useSuperfluid } from 'provider/superfluid-provider';
 import React from 'react';
@@ -16,6 +17,7 @@ export const SuperfluidStreamerTestPage: React.FunctionComponent = () => {
   const [, setSuperfluidInitialized] = useRecoilState(superfluidInitializedState);
 
   const onWalletConnected = (provider: Web3Provider, _address: string) => {
+    // TODO: Move the initialization to an upper component
     sf.initialize(provider)
       .then(() => {
         setSuperfluidInitialized(true);
