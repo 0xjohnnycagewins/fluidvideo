@@ -12,7 +12,9 @@ import React, { useMemo } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Route, Switch } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+import { Routes } from 'service/routing';
 import { NETWORKS } from 'utils/networks';
+import { MoralisProvider } from 'react-moralis';
 
 export const App: React.FunctionComponent = () => {
   const queryClient = useMemo(() => new QueryClient(), []);
@@ -31,24 +33,29 @@ export const App: React.FunctionComponent = () => {
   );
   return (
     <RecoilRoot>
-      <LocalProviderProvider network={NETWORKS.localhost}>
-        <InjectedProviderProvider>
-          <Web3ModalProvider>
-            <SuperfluidProvider>
-              <HttpClientProvider client={httpClient}>
-                <QueryClientProvider client={queryClient}>
-                  <Switch>
-                    <Route path="/dashboard" component={StreamerPage} />
-                    <Route path="/superfluid" component={SuperfluidTestPage} />
-                    <Route path="/superfluid-streamer" component={SuperfluidStreamerTestPage} />
-                    <Route path="/" component={MainPage} />
-                  </Switch>
-                </QueryClientProvider>
-              </HttpClientProvider>
-            </SuperfluidProvider>
-          </Web3ModalProvider>
-        </InjectedProviderProvider>
-      </LocalProviderProvider>
+      <MoralisProvider
+        appId={process.env.REACT_APP_MORALIS_APP_ID!}
+        serverUrl={process.env.REACT_APP_MORALIS_SERVER_URL!}
+      >
+        <LocalProviderProvider network={NETWORKS.localhost}>
+          <InjectedProviderProvider>
+            <Web3ModalProvider>
+              <SuperfluidProvider>
+                <HttpClientProvider client={httpClient}>
+                  <QueryClientProvider client={queryClient}>
+                    <Switch>
+                      <Route path={Routes.viewStream} component={StreamerPage} />
+                      <Route path="/superfluid" component={SuperfluidTestPage} />
+                      <Route path={Routes.stream} component={SuperfluidStreamerTestPage} />
+                      <Route path={Routes.main} component={MainPage} />
+                    </Switch>
+                  </QueryClientProvider>
+                </HttpClientProvider>
+              </SuperfluidProvider>
+            </Web3ModalProvider>
+          </InjectedProviderProvider>
+        </LocalProviderProvider>
+      </MoralisProvider>
     </RecoilRoot>
   );
 };

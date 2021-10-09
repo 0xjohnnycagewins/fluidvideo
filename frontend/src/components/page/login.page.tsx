@@ -1,4 +1,4 @@
-import { FullPageLayout } from 'components/layout/full-page-layout';
+import { PageLayout } from 'components/layout/page-layout';
 import { LoginContainer } from 'components/login/login-container';
 import React from 'react';
 import styled from 'styled-components';
@@ -13,7 +13,7 @@ export const LoginPage: React.FunctionComponent<Props> = ({ redirectToPath }) =>
   </FullPageLayoutCentered>
 );
 
-const FullPageLayoutCentered = styled(FullPageLayout)`
+const FullPageLayoutCentered = styled(PageLayout)`
   align-items: center;
   justify-content: center;
 `;

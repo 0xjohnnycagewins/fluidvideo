@@ -51,6 +51,7 @@
     }
   },
   "globals": {
-    "window.ethereum": "readonly"
+    "window.ethereum": "readonly",
+    "NodeJS": true
   }
 }
