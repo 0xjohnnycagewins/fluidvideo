@@ -7,9 +7,9 @@ import { WalletConnectButton } from 'components/wallet-connect-button';
 import { SuperfluidWrapper, useSuperfluid } from 'provider/superfluid-provider';
 import React from 'react';
 import styled from 'styled-components';
+import { daixTokenAddress } from 'utils/constants';
 
 const streamerAddress = '0x9e7343Ce1816a7fc21E1c46537F04050F97AfbD9';
-const daixTokenAddress = '0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00';
 
 export const SuperfluidTestPage: React.FunctionComponent = () => {
   const sf: SuperfluidWrapper = useSuperfluid();
@@ -34,7 +34,7 @@ export const SuperfluidTestPage: React.FunctionComponent = () => {
       .flow({
         recipient: streamerAddress,
         //TODO: Add a pricing here
-        flowRate: '385802469135802',
+        flowRate: '38580246913580200',
       })
       .then(() => console.log(`started flowing`))
       .catch((error) => console.log(`error flowing with : ${error}`));
