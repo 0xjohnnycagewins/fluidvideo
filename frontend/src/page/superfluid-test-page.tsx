@@ -1,8 +1,8 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { Button } from '@mui/material';
 import { User } from '@superfluid-finance/js-sdk/src/User';
-import { Box } from 'components/base/box.component';
-import { Column } from 'components/base/column.component';
+import { Box } from 'components/base/box';
+import { Column } from 'components/base/column';
 import { WalletConnectButton } from 'components/wallet-connect-button';
 import { SuperfluidWrapper, useSuperfluid } from 'provider/superfluid-provider';
 import React from 'react';
