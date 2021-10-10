@@ -12,9 +12,9 @@ export class SuperfluidWrapper {
   public get instance() {
     return this._instance;
   }
-  public initialize(provider: Web3Provider): Promise<void> {
+  public initialize(): Promise<void> {
     this._instance = new SuperfluidSDK.Framework({
-      ethers: provider,
+      ethers: new Web3Provider(window.ethereum),
     });
     return this._instance!.initialize();
   }

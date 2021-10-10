@@ -1,15 +1,18 @@
 import { CircularProgress } from '@mui/material';
 import { Box } from 'components/base/box';
+import { Column } from 'components/base/column';
 import { Span } from 'components/base/span';
 import { isEmpty, isNil } from 'ramda';
 import React, { useMemo } from 'react';
-import 'video.js/dist/video-js.css';
 import styled from 'styled-components';
+import 'video.js/dist/video-js.css';
 import VREPlayer from 'videojs-react-enhanced';
 
 interface Props extends VREPlayer.IPlayerOptions {
   playbackId: string | undefined;
   active?: boolean;
+  streamKey?: string;
+  autoplay?: 'muted' | 'play' | 'any';
   onPlay?: VoidFunction;
   onPause?: VoidFunction;
   onEnded?: VoidFunction;
@@ -17,7 +20,9 @@ interface Props extends VREPlayer.IPlayerOptions {
 
 export const VideoPlayer: React.FunctionComponent<Props> = ({
   active,
+  streamKey,
   playbackId,
+  autoplay,
   onPlay,
   onPause,
   onEnded,
@@ -26,9 +31,9 @@ export const VideoPlayer: React.FunctionComponent<Props> = ({
     () => ({
       src: `https://cdn.livepeer.com/hls/${playbackId}/index.m3u8`,
       controls: true,
-      autoplay: 'play',
+      autoplay: autoplay,
       width: 1120,
-      height: 620,
+      height: 630,
     }),
     [playbackId],
   );
@@ -49,6 +54,21 @@ export const VideoPlayer: React.FunctionComponent<Props> = ({
   }
 
   if (!active) {
+    if (!isNil(streamKey) && !isEmpty(streamKey)) {
+      return (
+        <VideoNotLiveStreamer width={playerOptions.width} height={playerOptions.height}>
+          <p>
+            <ColoredSpan>{'To stream, use these information'}</ColoredSpan>
+          </p>
+          <p>
+            <ColoredSpan>{`Server: rtmp://rtmp.livepeer.com/live`}</ColoredSpan>
+          </p>
+          <p>
+            <ColoredSpan>{`Stream Key: ${streamKey}`}</ColoredSpan>
+          </p>
+        </VideoNotLiveStreamer>
+      );
+    }
     return (
       <VideoNotLive width={playerOptions.width} height={playerOptions.height}>
         <ColoredSpan>{'There is no active stream.'}</ColoredSpan>
@@ -71,9 +91,16 @@ export const VideoPlayer: React.FunctionComponent<Props> = ({
   );
 };
 
+const VideoNotLiveStreamer = styled(({ width, height, ...rest }) => <Column {...rest} />)`
+  height: ${(props): number => props.height - 48}px;
+  width: 100%;
+  background-color: black;
+  padding: 24px;
+`;
+
 const VideoNotLive = styled(({ width, height, ...rest }) => <Box {...rest} />)`
-  height: ${(props): string => props.height}px;
-  width: ${(props): string => props.width}px;
+  height: ${(props): number => props.height - 48}px;
+  width: 100%;
   align-items: center;
   justify-content: center;
   background-color: black;
@@ -86,8 +113,8 @@ const ColoredSpan = styled(Span)`
 
 const PlayerContainer = styled(({ width, height, ...rest }) => <div {...rest} />)`
   > div {
-    height: ${(props): string => props.height}px;
-    width: ${(props): string => props.width}px;
+    height: ${(props): number => props.height}px;
+    width: 100%;
   }
 `;
 
