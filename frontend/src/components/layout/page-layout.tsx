@@ -27,7 +27,7 @@ export const PageLayout: React.FunctionComponent = ({ children }) => {
             </StyledHomeButton>
           </Paper>
           <HomeButtonContainer>
-            <IconButton color="inherit" onClick={() => history.push(Routes.main)}>
+            <IconButton color="default" onClick={() => history.push(Routes.main)}>
               <HomeOutlinedIcon />
             </IconButton>
           </HomeButtonContainer>
@@ -49,6 +49,7 @@ export const PageLayout: React.FunctionComponent = ({ children }) => {
 const Container = styled(Column)`
   width: 100%;
   height: 100%;
+  background: rgb(16, 16, 16);
 `;
 
 const StyledToolbar = styled(Toolbar)`

@@ -1,4 +1,3 @@
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -51,7 +50,6 @@ export const StreamPage: React.FunctionComponent = () => {
   const [moneyStreamStarted, setMoneyStreamStarted] = useState(false);
   const [startingMoneyStream, setStartingMoneyStream] = useState(false);
   const viewer = useRef<User | undefined>();
-
   const history = useHistory();
 
   // useEffect(() => {
@@ -106,22 +104,27 @@ export const StreamPage: React.FunctionComponent = () => {
   }, [followed, setFollowed]);
 
   const startStreamingFund = () => {
-    setStartingMoneyStream(true);
-    viewer
-      .current!.flow({
-        recipient: streamerAddress,
-        //TODO: Add a pricing here
-        flowRate: '38580246913580200',
-      })
-      .then(() => {
-        setStartingMoneyStream(false);
-        setMoneyStreamStarted(true);
-      })
-      // TODO: Add error handling
-      .catch((error) => {
-        setStartingMoneyStream(false);
-        setMoneyStreamStarted(false);
-      });
+    if (!isNil(viewer.current)) {
+      setStartingMoneyStream(true);
+      viewer
+        .current!.flow({
+          recipient: streamerAddress,
+          //TODO: Add a pricing here
+          flowRate: '38580246913580200',
+        })
+        .then(() => {
+          setStartingMoneyStream(false);
+          setMoneyStreamStarted(true);
+        })
+        // TODO: Add error handling
+        .catch((error) => {
+          setStartingMoneyStream(false);
+          setMoneyStreamStarted(false);
+        });
+    } else {
+      setStartingMoneyStream(false);
+      setMoneyStreamStarted(false);
+    }
   };
 
   const stopStreamingFund = () => {
@@ -140,7 +143,7 @@ export const StreamPage: React.FunctionComponent = () => {
   return (
     <PageLayout>
       {isAuthenticated ? (
-        <Box>
+        <Container>
           <LeftSide>
             <VideoPlayerContainer>
               {moneyStreamStarted ? (
@@ -155,6 +158,7 @@ export const StreamPage: React.FunctionComponent = () => {
                 <CenteredContainer>
                   <Button
                     variant="contained"
+                    color="secondary"
                     size="small"
                     endIcon={!moneyStreamStarted && <SendIcon />}
                     onClick={startStreamingFund}
@@ -167,12 +171,13 @@ export const StreamPage: React.FunctionComponent = () => {
             </VideoPlayerContainer>
             <StreamDetails>
               <StreamerInfo>
-                <AccountCircleIcon sx={{ fontSize: 100, color: 'gold' }} />
+                <Avatar src={`/mock/avatar.jpg`} />
                 <StreamerDetails>
                   <StreamerAddress>{streamerAddress}</StreamerAddress>
                   <StreamTitle>{'Stream Title'}</StreamTitle>
                   <StreamerActions>
                     <Button
+                      color="secondary"
                       onClick={switchFollow}
                       startIcon={followed ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                       variant="contained"
@@ -209,29 +214,57 @@ export const StreamPage: React.FunctionComponent = () => {
                   </AboutMe>
                 </PaperColumnLeft>
                 <PaperColumnRight>
-                  <Button startIcon={<InstagramIcon />} variant="text" size="small" fullWidth>
+                  <Button
+                    startIcon={<InstagramIcon />}
+                    variant="text"
+                    size="small"
+                    fullWidth
+                    color="secondary"
+                  >
                     Instagram
                   </Button>
-                  <Button startIcon={<FacebookIcon />} variant="text" size="small" fullWidth>
+                  <Button
+                    startIcon={<FacebookIcon />}
+                    variant="text"
+                    size="small"
+                    fullWidth
+                    color="secondary"
+                  >
                     Facebook
                   </Button>
-                  <Button startIcon={<YouTubeIcon />} variant="text" size="small" fullWidth>
+                  <Button
+                    startIcon={<YouTubeIcon />}
+                    variant="text"
+                    size="small"
+                    fullWidth
+                    color="secondary"
+                  >
                     YouTube
                   </Button>
-                  <Button startIcon={<TwitterIcon />} variant="text" size="small" fullWidth>
+                  <Button
+                    startIcon={<TwitterIcon />}
+                    variant="text"
+                    size="small"
+                    fullWidth
+                    color="secondary"
+                  >
                     Twitter
                   </Button>
                 </PaperColumnRight>
               </PaperBox>
             </StyledPaper>
           </LeftSide>
-        </Box>
+        </Container>
       ) : (
         <ConnectDialog />
       )}
     </PageLayout>
   );
 };
+
+const Container = styled(Box)`
+  width: 1120px;
+`;
 
 const LeftSide = styled(Column)`
   width: 1120px;
@@ -253,11 +286,17 @@ const StreamerDetails = styled(Column)`
   }
 `;
 
+const Avatar = styled.img`
+  width: 128px;
+  height: 128px;
+  border-radius: 64px;
+`;
+
 const StreamerAddress = styled(Span)`
   margin: 12px 0 0;
   font-size: 18px;
   font-weight: bold;
-  color: #ff6585;
+  color: #ce93d8;
 `;
 
 const StreamTitle = styled(Span)`
@@ -332,6 +371,12 @@ const AboutMe = styled(Span)`
 const VideoPlayerContainer = styled(Box)`
   width: 1120px;
   height: 630px;
+  > div {
+    display: flex;
+    width: 1120px;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 const CenteredContainer = styled(Box)`

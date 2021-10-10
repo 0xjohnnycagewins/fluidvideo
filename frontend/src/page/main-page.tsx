@@ -73,10 +73,7 @@ export const MainPage: React.FunctionComponent = () => {
 const FeaturedStreamContainer = styled(Box)`
   width: 100%;
   justify-content: center;
-  span {
-    color: inherit;
-    text-decoration: none;
-  }
+  margin-bottom: 32px;
 `;
 
 const StreamsContainer = styled(Box)`

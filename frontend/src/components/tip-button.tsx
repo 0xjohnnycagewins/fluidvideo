@@ -67,10 +67,14 @@ export const TipButton: React.FunctionComponent<Props> = ({ streamerAddress }) =
       .catch(() => setTipState(TipState.ERROR));
   };
   return (
-    <React.Fragment>
-      <ButtonGroup variant="contained" ref={anchorRef}>
-        <Button size="small" onClick={sendTip}>{`Tip ${options[selectedIndex]} DAI`}</Button>
-        <Button size="small" onClick={handleToggle}>
+    <>
+      <ButtonGroup variant="contained" ref={anchorRef} color="secondary">
+        <Button
+          size="small"
+          color="secondary"
+          onClick={sendTip}
+        >{`Tip ${options[selectedIndex]} DAI`}</Button>
+        <Button size="small" color="secondary" onClick={handleToggle}>
           <ArrowDropDownIcon />
         </Button>
       </ButtonGroup>
@@ -100,7 +104,7 @@ export const TipButton: React.FunctionComponent<Props> = ({ streamerAddress }) =
           </Grow>
         )}
       </Popper>
-    </React.Fragment>
+    </>
 
     // <>
     //   <InputBase sx={{ ml: 1, flex: 1 }} placeholder="Tip amount" onChange={tipValueChanger} />

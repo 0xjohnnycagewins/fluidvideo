@@ -48,7 +48,7 @@ export const VideoPlayer: React.FunctionComponent<Props> = ({
   if (isNil(playbackId) || isEmpty(playbackId)) {
     return (
       <VideoNotLive width={playerOptions.width} height={playerOptions.height}>
-        <CircularProgress />
+        <CircularProgress color={'secondary'} />
       </VideoNotLive>
     );
   }
@@ -58,20 +58,20 @@ export const VideoPlayer: React.FunctionComponent<Props> = ({
       return (
         <VideoNotLiveStreamer width={playerOptions.width} height={playerOptions.height}>
           <p>
-            <ColoredSpan>{'To stream, use these information'}</ColoredSpan>
+            <Span>{'To stream, use these information'}</Span>
           </p>
           <p>
-            <ColoredSpan>{`Server: rtmp://rtmp.livepeer.com/live`}</ColoredSpan>
+            <Span>{`Server: rtmp://rtmp.livepeer.com/live`}</Span>
           </p>
           <p>
-            <ColoredSpan>{`Stream Key: ${streamKey}`}</ColoredSpan>
+            <Span>{`Stream Key: ${streamKey}`}</Span>
           </p>
         </VideoNotLiveStreamer>
       );
     }
     return (
       <VideoNotLive width={playerOptions.width} height={playerOptions.height}>
-        <ColoredSpan>{'There is no active stream.'}</ColoredSpan>
+        <Span>{'There is no active stream.'}</Span>
       </VideoNotLive>
     );
   }
@@ -104,11 +104,6 @@ const VideoNotLive = styled(({ width, height, ...rest }) => <Box {...rest} />)`
   align-items: center;
   justify-content: center;
   background-color: black;
-`;
-
-// TODO add color to style instead
-const ColoredSpan = styled(Span)`
-  color: rgb(222, 222, 227);
 `;
 
 const PlayerContainer = styled(({ width, height, ...rest }) => <div {...rest} />)`

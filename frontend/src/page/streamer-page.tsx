@@ -185,36 +185,47 @@ export const StreamerPage: React.FunctionComponent = () => {
             />
             <StreamInfoContainer>
               <StreamDetailsPaper>
-                <TitleTextField
-                  label="What are you streaming today?"
-                  variant={'outlined'}
-                  disabled={published}
-                  onChange={titleOnChange}
-                  value={form.title}
-                />
-                <FeesFormControl variant="outlined">
-                  <InputLabel htmlFor="fees-per-hour">$ per hour</InputLabel>
-                  <OutlinedInput
-                    id="fees-per-hour"
-                    label="$ per hour"
+                <StyledColumn>
+                  <TitleTextField
+                    color={'secondary'}
+                    label="What are you streaming today?"
+                    variant={'outlined'}
                     disabled={published}
-                    onChange={tipOnChange}
-                    value={form.fees}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <Tooltip
-                          title={'All fees are paid in Dai. You are paid every second.'}
-                          placement={'top'}
-                        >
-                          <InfoOutlinedIcon />
-                        </Tooltip>
-                      </InputAdornment>
-                    }
+                    onChange={titleOnChange}
+                    value={form.title}
                   />
-                </FeesFormControl>
-                <Button variant={'outlined'} onClick={publishStream} disabled={published}>
-                  Publish
-                </Button>
+                  <FeesFormControl variant="outlined" color={'secondary'}>
+                    <InputLabel htmlFor="fees-per-hour" color={'secondary'}>
+                      $ per hour
+                    </InputLabel>
+                    <OutlinedInput
+                      color={'secondary'}
+                      id="fees-per-hour"
+                      label="$ per hour"
+                      disabled={published}
+                      onChange={tipOnChange}
+                      value={form.fees}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <Tooltip
+                            title={'All fees are paid in Dai. You are paid every second.'}
+                            placement={'top'}
+                          >
+                            <InfoOutlinedIcon />
+                          </Tooltip>
+                        </InputAdornment>
+                      }
+                    />
+                  </FeesFormControl>
+                  <PublishButton
+                    variant={'contained'}
+                    color={'secondary'}
+                    onClick={publishStream}
+                    disabled={published}
+                  >
+                    Publish
+                  </PublishButton>
+                </StyledColumn>
               </StreamDetailsPaper>
               <LiveMetricsBox>
                 <SuperfluidConnected>
@@ -265,7 +276,11 @@ const StreamInfoContainer = styled(Box)`
 const StreamDetailsPaper = styled(Paper)`
   flex: 2;
   padding: 32px 16px;
-  > div:not(:first-child) {
+`;
+
+const StyledColumn = styled(Column)`
+  > div:not(:first-child),
+  button {
     margin-top: 16px;
   }
 `;
@@ -273,4 +288,10 @@ const StreamDetailsPaper = styled(Paper)`
 const LiveMetricsBox = styled(Box)`
   flex: 1;
   justify-content: flex-end;
+`;
+
+const PublishButton = styled(Button)`
+  && {
+    width: 36%;
+  }
 `;

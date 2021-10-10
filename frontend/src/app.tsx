@@ -1,3 +1,4 @@
+import { createTheme, ThemeProvider } from '@mui/material';
 import { Axios } from 'axios';
 import { MoralisBootstrap } from 'components/moralis-bootstrap';
 import { MainPage } from 'page/main-page';
@@ -31,31 +32,65 @@ export const App: React.FunctionComponent = () => {
       }),
     [],
   );
+  const theme = useMemo(() => {
+    return createTheme({
+      palette: {
+        mode: 'dark',
+      },
+      typography: {
+        fontFamily: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          'Roboto',
+          '"Helvetica Neue"',
+          'Arial',
+          'sans-serif',
+          '"Apple Color Emoji"',
+          '"Segoe UI Emoji"',
+          '"Segoe UI Symbol"',
+        ].join(','),
+      },
+      components: {
+        MuiButton: {
+          styleOverrides: {
+            root: {
+              // Some CSS
+              color: 'rgb(239, 239, 241)',
+              textTransform: 'none',
+            },
+          },
+        },
+      },
+    });
+  }, []);
   return (
-    <RecoilRoot>
-      <MoralisProvider
-        appId={process.env.REACT_APP_MORALIS_APP_ID!}
-        serverUrl={process.env.REACT_APP_MORALIS_SERVER_URL!}
-      >
-        <MoralisBootstrap />
-        <LocalProviderProvider network={NETWORKS.localhost}>
-          <InjectedProviderProvider>
-            <Web3ModalProvider>
-              <SuperfluidProvider>
-                <HttpClientProvider client={httpClient}>
-                  <QueryClientProvider client={queryClient}>
-                    <Switch>
-                      <Route path={Routes.viewStream} component={StreamPage} />
-                      <Route path={Routes.stream} component={StreamerPage} />
-                      <Route path={Routes.main} component={MainPage} />
-                    </Switch>
-                  </QueryClientProvider>
-                </HttpClientProvider>
-              </SuperfluidProvider>
-            </Web3ModalProvider>
-          </InjectedProviderProvider>
-        </LocalProviderProvider>
-      </MoralisProvider>
-    </RecoilRoot>
+    <ThemeProvider theme={theme}>
+      <RecoilRoot>
+        <MoralisProvider
+          appId={process.env.REACT_APP_MORALIS_APP_ID!}
+          serverUrl={process.env.REACT_APP_MORALIS_SERVER_URL!}
+        >
+          <MoralisBootstrap />
+          <LocalProviderProvider network={NETWORKS.localhost}>
+            <InjectedProviderProvider>
+              <Web3ModalProvider>
+                <SuperfluidProvider>
+                  <HttpClientProvider client={httpClient}>
+                    <QueryClientProvider client={queryClient}>
+                      <Switch>
+                        <Route path={Routes.viewStream} component={StreamPage} />
+                        <Route path={Routes.stream} component={StreamerPage} />
+                        <Route path={Routes.main} component={MainPage} />
+                      </Switch>
+                    </QueryClientProvider>
+                  </HttpClientProvider>
+                </SuperfluidProvider>
+              </Web3ModalProvider>
+            </InjectedProviderProvider>
+          </LocalProviderProvider>
+        </MoralisProvider>
+      </RecoilRoot>
+    </ThemeProvider>
   );
 };
