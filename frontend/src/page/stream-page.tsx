@@ -21,7 +21,7 @@ import { VideoPlayer } from 'components/video-player';
 import { useGetStream } from 'hooks/use-query-streams';
 import { useUserAddress } from 'hooks/use-user-address';
 import { SuperfluidWrapper, useSuperfluid } from 'provider/superfluid-provider';
-import { isEmpty } from 'ramda';
+import { isEmpty, isNil } from 'ramda';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMoralis } from 'react-moralis';
 import { useHistory, useParams } from 'react-router-dom';
@@ -68,12 +68,14 @@ export const StreamPage: React.FunctionComponent = () => {
 
   useEffect(() => {
     return () => {
-      viewer
-        .current!.flow({
-          recipient: streamerAddress,
-          flowRate: '0',
-        })
-        .catch((error) => console.log(`error stopping flow with : ${error}`));
+      if (!isNil(viewer.current)) {
+        viewer.current
+          .flow({
+            recipient: streamerAddress,
+            flowRate: '0',
+          })
+          .catch((error) => console.log(`error stopping flow with : ${error}`));
+      }
     };
   }, []);
 
@@ -255,7 +257,7 @@ const StreamerAddress = styled(Span)`
   margin: 12px 0 0;
   font-size: 18px;
   font-weight: bold;
-  color: hotpink;
+  color: #ff6585;
 `;
 
 const StreamTitle = styled(Span)`

@@ -1,5 +1,13 @@
 import Moralis from 'moralis';
 
+export interface StreamModel {
+  title: string;
+  streamId?: string;
+  streamerAddress?: string;
+  fees: number;
+  viewersCount: number;
+}
+
 export class Stream extends Moralis.Object {
   public title: string = '';
   public streamId?: string;

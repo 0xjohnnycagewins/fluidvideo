@@ -21,6 +21,7 @@
     "dayjs": "^1.10.7",
     "eth-hooks": "^2.3.9",
     "moralis": "^0.0.74",
+    "path-to-regexp": "^6.2.0",
     "query-string": "^7.0.1",
     "ramda": "^0.27.1",
     "react": "^17.0.2",
