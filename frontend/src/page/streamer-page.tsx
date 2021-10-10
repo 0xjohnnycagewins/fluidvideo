@@ -1,6 +1,7 @@
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import {
   Alert,
+  Button,
   FormControl,
   InputAdornment,
   InputLabel,
@@ -20,20 +21,27 @@ import { VideoPlayer } from 'components/video-player';
 import { useCreateStream, useGetStream, useGetStreams } from 'hooks/use-query-streams';
 import { useUserAddress } from 'hooks/use-user-address';
 import { useWindowSize } from 'hooks/use-window-size';
+import { Event, EventType } from 'model/event-model';
+import { Stream as StreamDBModel } from 'model/stream-model';
 import Moralis from 'moralis';
 import { SuperfluidWrapper, useSuperfluid } from 'provider/superfluid-provider';
-import { isNil } from 'ramda';
-import React, { useCallback, useEffect, useState } from 'react';
+import { isEmpty, isNil } from 'ramda';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import Confetti from 'react-confetti';
 import { useMoralis } from 'react-moralis';
 import { useRecoilState } from 'recoil';
 import { Stream } from 'service/http/model/stream';
 import styled from 'styled-components';
 import { getAtom, StateKey } from 'utils/recoil';
-import Confetti from 'react-confetti';
 
 interface ReceivedTip {
   fromAddress: string;
   value: number;
+}
+
+interface FormValues {
+  title: string;
+  fees: number;
 }
 
 export const StreamerPage: React.FunctionComponent = () => {
@@ -50,10 +58,25 @@ export const StreamerPage: React.FunctionComponent = () => {
   const [myStream, setMyStream] = useState<Stream | undefined>(undefined);
   const { data: streamData } = useGetStream(myStream?.id);
   const [receivedTip, setReceivedTip] = useState<ReceivedTip | undefined>(undefined);
+  const [form, setForm] = useState<FormValues>({ title: '', fees: 0 });
+  const [published, setPublished] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isNil(myStream) && myStream.isActive) {
+      const query = new Moralis.Query(Moralis.Object.extend('Stream'));
+      query.equalTo('streamId', myStream!.id);
+      query.find().then((results) => {
+        if (!isEmpty(results)) {
+          setPublished(true);
+          setForm({ title: results[0].get('title'), fees: results[0].get('fees') });
+        }
+      });
+    }
+  }, [myStream]);
 
   useEffect((): void => {
     if (isAuthenticated && !superfluidInitialized) {
-      // initialize superfluid
+      // initialize Superfluid
       sf.initialize()
         .then(() => {
           setSuperfluidInitialized(true);
@@ -74,7 +97,20 @@ export const StreamerPage: React.FunctionComponent = () => {
       query.subscribe().then((subscription) =>
         subscription.on('create', (data) => {
           // @ts-ignore
-          setReceivedTip({ fromAddress: data.from_address, value: data.value / (10 ^ 18) });
+          setReceivedTip({
+            fromAddress: data.attributes.from_address,
+            value: data.attributes.value / 10 ** 18,
+          });
+          const event = new Event();
+          event.set('type', EventType.TIP);
+          // @ts-ignore
+          event.set('from', data.attributes.from_address);
+          // @ts-ignore
+          event.set('amount', data.attributes.value / 10 ** 18);
+          event.set('to', userAddress);
+          event
+            .save()
+            .catch((error: any) => console.error(`Error saving event to the DB: ${error}`));
         }),
       );
     }
@@ -108,6 +144,34 @@ export const StreamerPage: React.FunctionComponent = () => {
     setReceivedTip(undefined);
   }, [setReceivedTip]);
 
+  const titleOnChange = (event: any) => {
+    setForm((oldValue) => ({ ...oldValue, title: event.target.value }));
+  };
+  const tipOnChange = (event: any) => {
+    let newValue = Number.parseInt(event.target.value);
+    if (isNaN(newValue)) {
+      newValue = 0;
+    }
+    setForm((oldValue) => ({ ...oldValue, fees: newValue }));
+  };
+
+  const publishStream = () => {
+    if (!isNil(myStream)) {
+      const streamDb = new StreamDBModel();
+      streamDb.set('title', form.title);
+      streamDb.set('streamId', myStream.id);
+      streamDb.set('streamerAddress', userAddress);
+      streamDb.set('fees', form.fees);
+      streamDb
+        .save()
+        .then(() => setPublished(true))
+        .catch((error) => {
+          setPublished(false);
+          console.error(`Error saving stream to DB: ${error}`);
+        });
+    }
+  };
+
   return (
     <PageLayout>
       {isAuthenticated ? (
@@ -124,14 +188,18 @@ export const StreamerPage: React.FunctionComponent = () => {
                 <TitleTextField
                   label="What are you streaming today?"
                   variant={'outlined'}
-                  disabled={myStream?.isActive}
+                  disabled={published}
+                  onChange={titleOnChange}
+                  value={form.title}
                 />
                 <FeesFormControl variant="outlined">
                   <InputLabel htmlFor="fees-per-hour">$ per hour</InputLabel>
                   <OutlinedInput
                     id="fees-per-hour"
                     label="$ per hour"
-                    disabled={myStream?.isActive}
+                    disabled={published}
+                    onChange={tipOnChange}
+                    value={form.fees}
                     endAdornment={
                       <InputAdornment position="end">
                         <Tooltip
@@ -144,6 +212,9 @@ export const StreamerPage: React.FunctionComponent = () => {
                     }
                   />
                 </FeesFormControl>
+                <Button variant={'outlined'} onClick={publishStream} disabled={published}>
+                  Publish
+                </Button>
               </StreamDetailsPaper>
               <LiveMetricsBox>
                 <SuperfluidConnected>
