@@ -111,45 +111,47 @@ export const StreamerPage: React.FunctionComponent = () => {
   return (
     <PageLayout>
       {isAuthenticated ? (
-        <Column>
-          <VideoPlayer
-            playbackId={myStream?.playbackId}
-            active={myStream?.isActive}
-            streamKey={myStream?.streamKey}
-          />
-          <StreamInfoContainer>
-            <StreamDetailsPaper>
-              <TitleTextField
-                label="What are you streaming today?"
-                variant={'outlined'}
-                disabled={myStream?.isActive}
-              />
-              <FeesFormControl variant="outlined">
-                <InputLabel htmlFor="fees-per-hour">$ per hour</InputLabel>
-                <OutlinedInput
-                  id="fees-per-hour"
-                  label="$ per hour"
+        <Box>
+          <LeftSide>
+            <VideoPlayer
+              playbackId={myStream?.playbackId}
+              active={myStream?.isActive}
+              streamKey={myStream?.streamKey}
+            />
+            <StreamInfoContainer>
+              <StreamDetailsPaper>
+                <TitleTextField
+                  label="What are you streaming today?"
+                  variant={'outlined'}
                   disabled={myStream?.isActive}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <Tooltip
-                        title={'All fees are paid in Dai. You are paid every second.'}
-                        placement={'top'}
-                      >
-                        <InfoOutlinedIcon />
-                      </Tooltip>
-                    </InputAdornment>
-                  }
                 />
-              </FeesFormControl>
-            </StreamDetailsPaper>
-            <LiveMetricsBox>
-              <SuperfluidConnected>
-                <StreamMetricsChips />
-              </SuperfluidConnected>
-            </LiveMetricsBox>
-          </StreamInfoContainer>
-        </Column>
+                <FeesFormControl variant="outlined">
+                  <InputLabel htmlFor="fees-per-hour">$ per hour</InputLabel>
+                  <OutlinedInput
+                    id="fees-per-hour"
+                    label="$ per hour"
+                    disabled={myStream?.isActive}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <Tooltip
+                          title={'All fees are paid in Dai. You are paid every second.'}
+                          placement={'top'}
+                        >
+                          <InfoOutlinedIcon />
+                        </Tooltip>
+                      </InputAdornment>
+                    }
+                  />
+                </FeesFormControl>
+              </StreamDetailsPaper>
+              <LiveMetricsBox>
+                <SuperfluidConnected>
+                  <StreamMetricsChips />
+                </SuperfluidConnected>
+              </LiveMetricsBox>
+            </StreamInfoContainer>
+          </LeftSide>
+        </Box>
       ) : (
         <ConnectDialog />
       )}
@@ -162,6 +164,11 @@ export const StreamerPage: React.FunctionComponent = () => {
     </PageLayout>
   );
 };
+
+const LeftSide = styled(Column)`
+  width: 1120px;
+  height: 100%;
+`;
 
 const TitleTextField = styled(TextField)`
   && {

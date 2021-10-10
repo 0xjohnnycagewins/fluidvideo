@@ -91,14 +91,14 @@ export const VideoPlayer: React.FunctionComponent<Props> = ({
 
 const VideoNotLiveStreamer = styled(({ width, height, ...rest }) => <Column {...rest} />)`
   height: ${(props): number => props.height - 48}px;
-  width: ${(props): number => props.width - 48}px;
+  width: 100%;
   background-color: black;
   padding: 24px;
 `;
 
 const VideoNotLive = styled(({ width, height, ...rest }) => <Box {...rest} />)`
   height: ${(props): number => props.height - 48}px;
-  width: ${(props): number => props.width - 48}px;
+  width: 100%;
   align-items: center;
   justify-content: center;
   background-color: black;
@@ -111,8 +111,8 @@ const ColoredSpan = styled(Span)`
 
 const PlayerContainer = styled(({ width, height, ...rest }) => <div {...rest} />)`
   > div {
-    height: ${(props): number => props.height - 48}px;
-    width: ${(props): number => props.width - 48}px;
+    height: ${(props): number => props.height}px;
+    width: 100%;
   }
 `;
 

@@ -1,17 +1,20 @@
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import SearchIcon from '@mui/icons-material/Search';
+import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
 import { AppBar, Button, IconButton, InputBase, Paper, Toolbar } from '@mui/material';
 import { Box } from 'components/base/box';
 import { Column } from 'components/base/column';
 import { ConnectButton } from 'components/connect-button';
 import React from 'react';
 import { useMoralis } from 'react-moralis';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Routes } from 'service/routing';
 import styled from 'styled-components';
-import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
-import { Link } from 'react-router-dom';
 
 export const PageLayout: React.FunctionComponent = ({ children }) => {
   const { isAuthenticated } = useMoralis();
+  const history = useHistory();
+  const location = useLocation();
 
   return (
     <Container>
@@ -19,12 +22,17 @@ export const PageLayout: React.FunctionComponent = ({ children }) => {
         <StyledToolbar>
           <Paper>
             <StyledInputBase sx={{ ml: 1, flex: 1 }} placeholder="Search" />
-            <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
+            <StyledHomeButton type="submit" sx={{ p: '10px' }} aria-label="search">
               <SearchIcon />
-            </IconButton>
+            </StyledHomeButton>
           </Paper>
+          <HomeButtonContainer>
+            <IconButton color="inherit" onClick={() => history.push(Routes.main)}>
+              <HomeOutlinedIcon />
+            </IconButton>
+          </HomeButtonContainer>
           <ButtonContainer>
-            {isAuthenticated && (
+            {isAuthenticated && location.pathname === Routes.main && (
               <Button variant="outlined" color="inherit" startIcon={<VideocamOutlinedIcon />}>
                 <StyledLink to={Routes.stream}>Start Stream</StyledLink>
               </Button>
@@ -56,11 +64,26 @@ const StyledInputBase = styled(InputBase)`
   }
 `;
 
+const StyledHomeButton = styled(IconButton)`
+  && {
+    color: inherit;
+    margin-right: 0;
+  }
+`;
+
 const StyledConnectButton = styled(ConnectButton)`
   && {
     color: inherit;
     margin-right: 0;
   }
+`;
+
+const HomeButtonContainer = styled(Box)`
+  position: absolute;
+  top: 0;
+  left: 24px;
+  height: 64px;
+  align-items: center;
 `;
 
 const ButtonContainer = styled(Box)`
