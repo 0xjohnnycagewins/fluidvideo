@@ -5,6 +5,7 @@ import { FlowList } from '@superfluid-finance/js-sdk';
 import { Box } from 'components/base/box';
 import { ethers } from 'ethers';
 import { useUserAddress } from 'hooks/use-user-address';
+import { Event, EventType } from 'model/event-model';
 import { useSuperfluid } from 'provider/superfluid-provider';
 import { isNil, reject } from 'ramda';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -98,13 +99,20 @@ export const StreamMetricsChips: React.FunctionComponent = () => {
     );
     contract.on('FlowUpdated', (token, sender, receiver, flowRate) => {
       const flowRateInt = Number.parseInt(flowRate);
+      const event = new Event();
+      event.set('from', sender);
+      event.set('to', receiver);
+
       if (flowRateInt > 0) {
         startFlow(sender, Number.parseInt(flowRate));
         addViewer(sender);
+        event.set('type', EventType.JOIN);
       } else {
         stopFlow(sender);
         removeViewer(sender);
+        event.set('type', EventType.LEAVE);
       }
+      event.save().catch((error) => console.error(`Error saving event to the DB: ${error}`));
     });
     return () => stopAllFlow();
   }, []);
