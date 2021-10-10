@@ -24,10 +24,11 @@ import { SuperfluidWrapper, useSuperfluid } from 'provider/superfluid-provider';
 import { isEmpty } from 'ramda';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMoralis } from 'react-moralis';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { daixTokenAddress } from 'utils/constants';
+import { getHistoryBlockString } from 'utils/dialog';
 import { getAtom, StateKey } from 'utils/recoil';
 
 interface StreamPageParameters {
@@ -50,6 +51,31 @@ export const StreamPage: React.FunctionComponent = () => {
   const [moneyStreamStarted, setMoneyStreamStarted] = useState(false);
   const [startingMoneyStream, setStartingMoneyStream] = useState(false);
   const viewer = useRef<User | undefined>();
+
+  const history = useHistory();
+
+  // useEffect(() => {
+  //   const unregisterBlock = history.block((_location: any, action: any) => {
+  //     if (action === 'POP') {
+  //       return getHistoryBlockString('history.block custom dialog', 'CANCEL', 'YES PROCEED');
+  //     }
+  //     return null;
+  //   });
+  //   return (): void => {
+  //     unregisterBlock();
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    return () => {
+      viewer
+        .current!.flow({
+          recipient: streamerAddress,
+          flowRate: '0',
+        })
+        .catch((error) => console.log(`error stopping flow with : ${error}`));
+    };
+  }, []);
 
   useEffect((): void => {
     if (isAuthenticated && !superfluidInitialized) {
@@ -117,6 +143,7 @@ export const StreamPage: React.FunctionComponent = () => {
             <VideoPlayerContainer>
               {moneyStreamStarted ? (
                 <VideoPlayer
+                  autoplay="play"
                   playbackId={streamData?.playbackId}
                   active={streamData?.isActive}
                   onEnded={stopStreamingFund}
