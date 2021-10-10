@@ -170,6 +170,7 @@ export const StreamerPage: React.FunctionComponent = () => {
           console.error(`Error saving stream to DB: ${error}`);
         });
     }
+    console.error(`Cannot save stream to DB: empty stream`);
   };
 
   return (

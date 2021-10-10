@@ -171,7 +171,7 @@ export const StreamPage: React.FunctionComponent = () => {
             </VideoPlayerContainer>
             <StreamDetails>
               <StreamerInfo>
-                <Avatar src={`/mock/avatar.jpg`} />
+                <Avatar src={`/mock/featured-stream-avatar.jpg`} />
                 <StreamerDetails>
                   <StreamerAddress>{streamerAddress}</StreamerAddress>
                   <StreamTitle>{'Stream Title'}</StreamTitle>

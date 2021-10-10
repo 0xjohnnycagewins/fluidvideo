@@ -30,10 +30,10 @@ export const FeaturedStream: React.FunctionComponent<Props> = ({
         <ViewersCountChip count={viewersCount} />
       </Box>
       <Details>
-        <AvatarImg src={`mock/featured-stream-avatar.png`} />
+        <AvatarImg src={`mock/featured-stream-avatar.jpg`} />
         <InfoContainer>
-          <Title ellipsis>{title ?? 'Magic Tournament 2021'}</Title>
-          <Name ellipsis>{streamer ?? 'magic.eth'}</Name>
+          <Title ellipsis>{title ?? 'Dr Disrespect plays HALO INFINITE FOR THE FIRST TIME '}</Title>
+          <Name ellipsis>{streamer ?? 'drdisrecpect.eth'}</Name>
         </InfoContainer>
       </Details>
     </Container>

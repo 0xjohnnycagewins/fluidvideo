@@ -1,5 +1,6 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {
+  Alert,
   Button,
   ButtonGroup,
   ClickAwayListener,
@@ -8,6 +9,7 @@ import {
   MenuList,
   Paper,
   Popper,
+  Snackbar,
 } from '@mui/material';
 import Moralis from 'moralis';
 import React, { useCallback, useState } from 'react';
@@ -104,27 +106,20 @@ export const TipButton: React.FunctionComponent<Props> = ({ streamerAddress }) =
           </Grow>
         )}
       </Popper>
+      <Snackbar
+        open={tipState === TipState.SUCCESS}
+        autoHideDuration={6000}
+        onClose={resetTipState}
+      >
+        <Alert onClose={resetTipState} severity="success" sx={{ width: '100%' }}>
+          {`Successly sent a tip of ${tipValue} to ${streamerAddress}`}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={tipState === TipState.ERROR} autoHideDuration={6000} onClose={resetTipState}>
+        <Alert onClose={resetTipState} severity="error" sx={{ width: '100%' }}>
+          {`Error sending tip to ${streamerAddress} :(`}
+        </Alert>
+      </Snackbar>
     </>
-
-    // <>
-    //   <InputBase sx={{ ml: 1, flex: 1 }} placeholder="Tip amount" onChange={tipValueChanger} />
-    //   <IconButton onClick={sendTip} disabled={tipValue <= 0}>
-    //     <DaiIcon />
-    //   </IconButton>
-    //   <Snackbar
-    //     open={tipState === TipState.SUCCESS}
-    //     autoHideDuration={6000}
-    //     onClose={resetTipState}
-    //   >
-    //     <Alert onClose={resetTipState} severity="success" sx={{ width: '100%' }}>
-    //       {`Successly sent a tip of ${tipValue} to ${streamerAddress}`}
-    //     </Alert>
-    //   </Snackbar>
-    //   <Snackbar open={tipState === TipState.ERROR} autoHideDuration={6000} onClose={resetTipState}>
-    //     <Alert onClose={resetTipState} severity="error" sx={{ width: '100%' }}>
-    //       {`Error sending tip to ${streamerAddress} :(`}
-    //     </Alert>
-    //   </Snackbar>
-    // </>
   );
 };

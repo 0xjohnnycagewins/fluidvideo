@@ -40,7 +40,11 @@ export const StreamMetricsChips: React.FunctionComponent = () => {
     (viewer: string) => {
       if (viewers.current.includes(viewer)) {
         viewers.current = reject((v: string) => v === viewer, viewers.current);
-        setViewersCount(viewersCount - 1);
+        if (viewersCount >= 1) {
+          setViewersCount(viewersCount - 1);
+        } else {
+          setViewersCount(0);
+        }
       }
     },
     [viewers, viewersCount],
