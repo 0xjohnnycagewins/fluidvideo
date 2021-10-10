@@ -29,7 +29,7 @@ export const ConnectButton: React.FunctionComponent = (props) => {
       {...props}
     >
       {isAuthenticated ? <AccountBoxOutlinedIcon /> : <AccountBalanceWalletOutlinedIcon />}
-      <ProfileDialog open={dialogOpened} onClose={() => setDialogOpened(false)} />
+      {dialogOpened && <ProfileDialog open={true} onClose={() => setDialogOpened(false)} />}
     </IconButton>
   );
 };

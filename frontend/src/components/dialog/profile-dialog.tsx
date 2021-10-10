@@ -4,6 +4,7 @@ import { Button, Dialog, Paper, Tooltip } from '@mui/material';
 import { DialogProps } from '@mui/material/Dialog/Dialog';
 import { Column } from 'components/base/column';
 import copy from 'copy-to-clipboard';
+import { useUserAddress } from 'hooks/use-user-address';
 import { isNil } from 'ramda';
 import React, { useState } from 'react';
 import { useMoralis } from 'react-moralis';
@@ -12,9 +13,9 @@ import styled from 'styled-components';
 export const ProfileDialog: React.FunctionComponent<DialogProps> = ({ onClose, open }) => {
   const { logout, isAuthenticated, user, isAuthenticating, isLoggingOut } = useMoralis();
   const [addressCopied, setAddressCopied] = useState<boolean>(false);
-  const userAddress = user?.get('ethAddress');
+  const userAddress = useUserAddress();
 
-  if (!isAuthenticated || isNil(user)) {
+  if (!isAuthenticated || isNil(user) || isNil(userAddress)) {
     onClose?.({}, 'backdropClick');
     return null;
   }

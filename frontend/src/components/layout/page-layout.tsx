@@ -1,6 +1,7 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { AppBar, Button, IconButton, InputBase, Paper, Toolbar } from '@mui/material';
 import { Box } from 'components/base/box';
+import { Column } from 'components/base/column';
 import { ConnectButton } from 'components/connect-button';
 import React from 'react';
 import { useMoralis } from 'react-moralis';
@@ -24,12 +25,7 @@ export const PageLayout: React.FunctionComponent = ({ children }) => {
           </Paper>
           <ButtonContainer>
             {isAuthenticated && (
-              <Button
-                variant="outlined"
-                color="inherit"
-                startIcon={<VideocamOutlinedIcon />}
-                onClick={() => history}
-              >
+              <Button variant="outlined" color="inherit" startIcon={<VideocamOutlinedIcon />}>
                 <StyledLink to={Routes.stream}>Start Stream</StyledLink>
               </Button>
             )}
@@ -37,12 +33,12 @@ export const PageLayout: React.FunctionComponent = ({ children }) => {
           </ButtonContainer>
         </StyledToolbar>
       </AppBar>
-      <>{children}</>
+      <ChildrenContainer>{children}</ChildrenContainer>
     </Container>
   );
 };
 
-const Container = styled(Box)`
+const Container = styled(Column)`
   width: 100%;
   height: 100%;
 `;
@@ -81,4 +77,9 @@ const ButtonContainer = styled(Box)`
 const StyledLink = styled(Link)`
   color: inherit;
   text-decoration: none;
+`;
+
+const ChildrenContainer = styled(Column)`
+  flex: 1 1 auto;
+  padding: 32px 64px;
 `;
