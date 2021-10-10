@@ -1,4 +1,13 @@
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import IosShareIcon from '@mui/icons-material/IosShare';
+import SendIcon from '@mui/icons-material/Send';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 import { Button, Chip, IconButton, Paper } from '@mui/material';
 import { User } from '@superfluid-finance/js-sdk/src/User';
 import { Box } from 'components/base/box';
@@ -12,6 +21,7 @@ import { VideoPlayer } from 'components/video-player';
 import { useGetStream } from 'hooks/use-query-streams';
 import { useUserAddress } from 'hooks/use-user-address';
 import { SuperfluidWrapper, useSuperfluid } from 'provider/superfluid-provider';
+import { isEmpty } from 'ramda';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMoralis } from 'react-moralis';
 import { useParams } from 'react-router-dom';
@@ -19,14 +29,6 @@ import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { daixTokenAddress } from 'utils/constants';
 import { getAtom, StateKey } from 'utils/recoil';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import IosShareIcon from '@mui/icons-material/IosShare';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import YouTubeIcon from '@mui/icons-material/YouTube';
-import TwitterIcon from '@mui/icons-material/Twitter';
 
 interface StreamPageParameters {
   streamerAddress: string;
@@ -45,6 +47,8 @@ export const StreamPage: React.FunctionComponent = () => {
   const { data: streamData } = useGetStream(streamId);
   const [followed, setFollowed] = useState<boolean>(false);
   const [viewersCount, setViewersCount] = useState(0);
+  const [moneyStreamStarted, setMoneyStreamStarted] = useState(false);
+  const [startingMoneyStream, setStartingMoneyStream] = useState(false);
   const viewer = useRef<User | undefined>();
 
   useEffect((): void => {
@@ -53,6 +57,14 @@ export const StreamPage: React.FunctionComponent = () => {
         .then(() => {
           setSuperfluidInitialized(true);
           viewer.current = sf.instance!.user({ address: address!, token: daixTokenAddress });
+          viewer.current?.details().then((details) => {
+            const streams = details.cfa.flows.outFlows
+              .map((flow: any) => flow.receiver)
+              .filter(
+                (receiver: string) => receiver.toUpperCase() === streamerAddress.toUpperCase(),
+              );
+            setMoneyStreamStarted(!isEmpty(streams));
+          });
         })
         .catch((error) => {
           console.log(`Error initializing the Superfluid SDK: ${error}`);
@@ -66,14 +78,22 @@ export const StreamPage: React.FunctionComponent = () => {
   }, [followed, setFollowed]);
 
   const startStreamingFund = () => {
+    setStartingMoneyStream(true);
     viewer
       .current!.flow({
         recipient: streamerAddress,
         //TODO: Add a pricing here
         flowRate: '38580246913580200',
       })
-      .then(() => console.log(`started flowing`))
-      .catch((error) => console.log(`error flowing with : ${error}`));
+      .then(() => {
+        setStartingMoneyStream(false);
+        setMoneyStreamStarted(true);
+      })
+      // TODO: Add error handling
+      .catch((error) => {
+        setStartingMoneyStream(false);
+        setMoneyStreamStarted(false);
+      });
   };
 
   const stopStreamingFund = () => {
@@ -82,7 +102,10 @@ export const StreamPage: React.FunctionComponent = () => {
         recipient: streamerAddress,
         flowRate: '0',
       })
-      .then(() => console.log(`stop flow`))
+      .then(() => {
+        setStartingMoneyStream(false);
+        setMoneyStreamStarted(false);
+      })
       .catch((error) => console.log(`error stopping flow with : ${error}`));
   };
 
@@ -91,12 +114,28 @@ export const StreamPage: React.FunctionComponent = () => {
       {isAuthenticated ? (
         <Box>
           <LeftSide>
-            <VideoPlayer
-              playbackId={streamData?.playbackId}
-              active={streamData?.isActive}
-              onPlay={() => startStreamingFund()}
-              onEnded={stopStreamingFund}
-            />
+            <VideoPlayerContainer>
+              {moneyStreamStarted ? (
+                <VideoPlayer
+                  playbackId={streamData?.playbackId}
+                  active={streamData?.isActive}
+                  onEnded={stopStreamingFund}
+                  onPause={stopStreamingFund}
+                />
+              ) : (
+                <CenteredContainer>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    endIcon={!moneyStreamStarted && <SendIcon />}
+                    onClick={startStreamingFund}
+                    disabled={startingMoneyStream}
+                  >
+                    {startingMoneyStream ? 'Starting stream...' : 'Start stream'}
+                  </Button>
+                </CenteredContainer>
+              )}
+            </VideoPlayerContainer>
             <StreamDetails>
               <StreamerInfo>
                 <AccountCircleIcon sx={{ fontSize: 100, color: 'gold' }} />
@@ -259,4 +298,18 @@ const AboutFollowers = styled(Span)`
 
 const AboutMe = styled(Span)`
   font-size: 14px;
+`;
+
+const VideoPlayerContainer = styled(Box)`
+  width: 1120px;
+  height: 630px;
+`;
+
+const CenteredContainer = styled(Box)`
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 `;
