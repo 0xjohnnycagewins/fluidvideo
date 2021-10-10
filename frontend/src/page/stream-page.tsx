@@ -6,11 +6,13 @@ import { Column } from 'components/base/column';
 import { Span } from 'components/base/span';
 import { ConnectDialog } from 'components/connect-dialog';
 import { PageLayout } from 'components/layout/page-layout';
+import { SuperfluidConnected } from 'components/superfluid-connected';
+import { TipButton } from 'components/tip-button';
 import { VideoPlayer } from 'components/video-player';
 import { useGetStream } from 'hooks/use-query-streams';
 import { useUserAddress } from 'hooks/use-user-address';
 import { SuperfluidWrapper, useSuperfluid } from 'provider/superfluid-provider';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMoralis } from 'react-moralis';
 import { useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -43,18 +45,14 @@ export const StreamPage: React.FunctionComponent = () => {
   const { data: streamData } = useGetStream(streamId);
   const [followed, setFollowed] = useState<boolean>(false);
   const [viewersCount, setViewersCount] = useState(0);
-  let viewer: User;
+  const viewer = useRef<User | undefined>();
 
   useEffect((): void => {
     if (isAuthenticated && !superfluidInitialized) {
       sf.initialize()
         .then(() => {
           setSuperfluidInitialized(true);
-          viewer = sf.instance!.user({ address: address!, token: daixTokenAddress });
-          viewer
-            .details()
-            .then((details) => console.log(`details for viewer are: ${JSON.stringify(details)}`))
-            .catch((error) => console.log(`got an error for details: ${error}`));
+          viewer.current = sf.instance!.user({ address: address!, token: daixTokenAddress });
         })
         .catch((error) => {
           console.log(`Error initializing the Superfluid SDK: ${error}`);
@@ -69,7 +67,7 @@ export const StreamPage: React.FunctionComponent = () => {
 
   const startStreamingFund = () => {
     viewer
-      .flow({
+      .current!.flow({
         recipient: streamerAddress,
         //TODO: Add a pricing here
         flowRate: '38580246913580200',
@@ -80,7 +78,7 @@ export const StreamPage: React.FunctionComponent = () => {
 
   const stopStreamingFund = () => {
     viewer
-      .flow({
+      .current!.flow({
         recipient: streamerAddress,
         flowRate: '0',
       })
@@ -93,7 +91,12 @@ export const StreamPage: React.FunctionComponent = () => {
       {isAuthenticated ? (
         <Box>
           <LeftSide>
-            <VideoPlayer playbackId={streamData?.playbackId} active={streamData?.isActive} />
+            <VideoPlayer
+              playbackId={streamData?.playbackId}
+              active={streamData?.isActive}
+              onPlay={() => startStreamingFund()}
+              onEnded={stopStreamingFund}
+            />
             <StreamDetails>
               <StreamerInfo>
                 <AccountCircleIcon sx={{ fontSize: 100, color: 'gold' }} />
@@ -121,13 +124,13 @@ export const StreamPage: React.FunctionComponent = () => {
                   variant="outlined"
                   label={`${viewersCount} viewers`}
                 />
-                {/*<SuperfluidConnected>*/}
-                {/*  <TipButton streamerAddress={streamerAddress} />*/}
-                {/*</SuperfluidConnected>*/}
+                <SuperfluidConnected>
+                  <TipButton streamerAddress={streamerAddress} />
+                </SuperfluidConnected>
               </StreamActions>
             </StreamDetails>
             <StyledPaper>
-              <Box>
+              <PaperBox>
                 <PaperColumnLeft>
                   <AboutStreamer>{`About ${streamerAddress}`}</AboutStreamer>
                   <AboutFollowers>{'136K followers'}</AboutFollowers>
@@ -151,7 +154,7 @@ export const StreamPage: React.FunctionComponent = () => {
                     Twitter
                   </Button>
                 </PaperColumnRight>
-              </Box>
+              </PaperBox>
             </StyledPaper>
           </LeftSide>
         </Box>
@@ -220,7 +223,6 @@ const StyledIconButton = styled(IconButton)`
 const StyledPaper = styled(Paper)`
   padding: 40px;
   margin-top: 16px;
-  width: 100%;
 `;
 
 const PaperColumnLeft = styled(Column)`
@@ -239,6 +241,10 @@ const PaperColumnRight = styled(Column)`
   > button {
     justify-content: flex-start;
   }
+`;
+
+const PaperBox = styled(Box)`
+  flex: 1 1 auto;
 `;
 
 const AboutStreamer = styled(Span)`

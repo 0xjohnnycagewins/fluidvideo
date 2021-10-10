@@ -12,6 +12,7 @@ interface Props extends VREPlayer.IPlayerOptions {
   playbackId: string | undefined;
   active?: boolean;
   streamKey?: string;
+  autoplay?: 'muted' | 'play' | 'any';
   onPlay?: VoidFunction;
   onPause?: VoidFunction;
   onEnded?: VoidFunction;
@@ -21,6 +22,7 @@ export const VideoPlayer: React.FunctionComponent<Props> = ({
   active,
   streamKey,
   playbackId,
+  autoplay,
   onPlay,
   onPause,
   onEnded,
@@ -29,7 +31,7 @@ export const VideoPlayer: React.FunctionComponent<Props> = ({
     () => ({
       src: `https://cdn.livepeer.com/hls/${playbackId}/index.m3u8`,
       controls: true,
-      autoplay: 'play',
+      autoplay: autoplay,
       width: 1120,
       height: 630,
     }),

@@ -117,6 +117,7 @@ export const StreamerPage: React.FunctionComponent = () => {
               playbackId={myStream?.playbackId}
               active={myStream?.isActive}
               streamKey={myStream?.streamKey}
+              autoplay={'play'}
             />
             <StreamInfoContainer>
               <StreamDetailsPaper>
